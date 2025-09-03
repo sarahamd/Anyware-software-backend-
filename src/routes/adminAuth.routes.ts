@@ -4,11 +4,12 @@ import {
   loginAdmin,
   getCurrentAdmin,
 } from "../controllers/adminAuth.controller";
-import { requireAdmin } from "../middlewares/requireAdmin.middleware";
 
 const router = express.Router();
+
 router.get("/getCurrentAdmin", getCurrentAdmin);
 router.post("/login", loginAdmin);
+router.post("/signup", registerAdmin);
 
 
 export default router;
