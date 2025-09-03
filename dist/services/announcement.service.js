@@ -1,16 +1,21 @@
-import Announcement from "../models/announcement.model";
-import { ValidationError } from "../errors/ValidationError";
-import { NotFoundError } from "../errors/NotFoundError";
-import { createAnnouncementSchema, updateAnnouncementSchema, } from "../validations/announcement.validation";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const announcement_model_1 = __importDefault(require("../models/announcement.model"));
+const ValidationError_1 = require("../errors/ValidationError");
+const NotFoundError_1 = require("../errors/NotFoundError");
+const announcement_validation_1 = require("../validations/announcement.validation");
 class AnnouncementService {
     async createAnnouncement(title, description, course, semester, user) {
         try {
-            await createAnnouncementSchema.validate({ title, description, course, semester, user }, { abortEarly: false });
+            await announcement_validation_1.createAnnouncementSchema.validate({ title, description, course, semester, user }, { abortEarly: false });
         }
         catch (err) {
-            throw new ValidationError(err.errors || err.message);
+            throw new ValidationError_1.ValidationError(err.errors || err.message);
         }
-        const announcement = await Announcement.create({
+        const announcement = await announcement_model_1.default.create({
             title,
             description,
             course,
@@ -20,34 +25,34 @@ class AnnouncementService {
         return announcement;
     }
     async getAllAnnouncements() {
-        return await Announcement.find().sort({ createdAt: -1 });
+        return await announcement_model_1.default.find().sort({ createdAt: -1 });
     }
     async getAnnouncementById(id) {
-        const announcement = await Announcement.findById(id);
+        const announcement = await announcement_model_1.default.findById(id);
         if (!announcement) {
-            throw new NotFoundError("Announcement not found");
+            throw new NotFoundError_1.NotFoundError("Announcement not found");
         }
         return announcement;
     }
     async updateAnnouncement({ id, title, description, course, semester, user, }) {
         try {
-            await updateAnnouncementSchema.validate({ title, description, course, semester, user }, { abortEarly: false });
+            await announcement_validation_1.updateAnnouncementSchema.validate({ title, description, course, semester, user }, { abortEarly: false });
         }
         catch (err) {
-            throw new ValidationError(err.errors || err.message);
+            throw new ValidationError_1.ValidationError(err.errors || err.message);
         }
-        const updatedAnnouncement = await Announcement.findByIdAndUpdate(id, { title, description, course, semester, user }, { new: true });
+        const updatedAnnouncement = await announcement_model_1.default.findByIdAndUpdate(id, { title, description, course, semester, user }, { new: true });
         if (!updatedAnnouncement) {
-            throw new NotFoundError("Announcement not found");
+            throw new NotFoundError_1.NotFoundError("Announcement not found");
         }
         return updatedAnnouncement;
     }
     async deleteAnnouncement(id) {
-        const deletedAnnouncement = await Announcement.findByIdAndDelete(id);
+        const deletedAnnouncement = await announcement_model_1.default.findByIdAndDelete(id);
         if (!deletedAnnouncement) {
-            throw new NotFoundError("Announcement not found");
+            throw new NotFoundError_1.NotFoundError("Announcement not found");
         }
         return { message: "Announcement deleted successfully" };
     }
 }
-export default new AnnouncementService();
+exports.default = new AnnouncementService();

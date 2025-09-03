@@ -1,14 +1,20 @@
-import { isValidObjectId } from "mongoose";
-import { createQuizSchema, updateQuizSchema, } from "../validations/quiz.validation";
-import { ValidationError } from "../errors/ValidationError";
-import quizService from "../services/quiz.service";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteQuiz = exports.updateQuiz = exports.getQuizById = exports.getQuizzes = exports.createQuiz = void 0;
+const mongoose_1 = require("mongoose");
+const quiz_validation_1 = require("../validations/quiz.validation");
+const ValidationError_1 = require("../errors/ValidationError");
+const quiz_service_1 = __importDefault(require("../services/quiz.service"));
 // Create Quiz
-export const createQuiz = async (req, res, next) => {
+const createQuiz = async (req, res, next) => {
     try {
-        const validatedData = await createQuizSchema.validate(req.body, {
+        const validatedData = await quiz_validation_1.createQuizSchema.validate(req.body, {
             abortEarly: false,
         });
-        const quiz = await quizService.createQuiz(validatedData);
+        const quiz = await quiz_service_1.default.createQuiz(validatedData);
         res.status(201).json({
             success: true,
             message: "Quiz created successfully",
@@ -19,10 +25,11 @@ export const createQuiz = async (req, res, next) => {
         next(error);
     }
 };
+exports.createQuiz = createQuiz;
 // Get All Quizzes
-export const getQuizzes = async (req, res, next) => {
+const getQuizzes = async (req, res, next) => {
     try {
-        const quizzes = await quizService.getQuizzes();
+        const quizzes = await quiz_service_1.default.getQuizzes();
         res.status(200).json({
             success: true,
             message: "Quizzes retrieved successfully",
@@ -33,14 +40,15 @@ export const getQuizzes = async (req, res, next) => {
         next(error);
     }
 };
+exports.getQuizzes = getQuizzes;
 // Get Quiz By ID
-export const getQuizById = async (req, res, next) => {
+const getQuizById = async (req, res, next) => {
     const { id } = req.params;
     try {
-        if (!isValidObjectId(id)) {
-            throw new ValidationError("Invalid quiz ID");
+        if (!(0, mongoose_1.isValidObjectId)(id)) {
+            throw new ValidationError_1.ValidationError("Invalid quiz ID");
         }
-        const quiz = await quizService.getQuizById(id);
+        const quiz = await quiz_service_1.default.getQuizById(id);
         res.status(200).json({
             success: true,
             message: "Quiz retrieved successfully",
@@ -51,17 +59,18 @@ export const getQuizById = async (req, res, next) => {
         next(error);
     }
 };
+exports.getQuizById = getQuizById;
 // Update Quiz
-export const updateQuiz = async (req, res, next) => {
+const updateQuiz = async (req, res, next) => {
     const { id } = req.params;
     try {
-        if (!isValidObjectId(id)) {
-            throw new ValidationError("Invalid quiz ID");
+        if (!(0, mongoose_1.isValidObjectId)(id)) {
+            throw new ValidationError_1.ValidationError("Invalid quiz ID");
         }
-        const validatedData = await updateQuizSchema.validate(req.body, {
+        const validatedData = await quiz_validation_1.updateQuizSchema.validate(req.body, {
             abortEarly: false,
         });
-        const quiz = await quizService.updateQuiz(id, validatedData);
+        const quiz = await quiz_service_1.default.updateQuiz(id, validatedData);
         res.status(200).json({
             success: true,
             message: "Quiz updated successfully",
@@ -72,14 +81,15 @@ export const updateQuiz = async (req, res, next) => {
         next(error);
     }
 };
+exports.updateQuiz = updateQuiz;
 // Delete Quiz
-export const deleteQuiz = async (req, res, next) => {
+const deleteQuiz = async (req, res, next) => {
     const { id } = req.params;
     try {
-        if (!isValidObjectId(id)) {
-            throw new ValidationError("Invalid quiz ID");
+        if (!(0, mongoose_1.isValidObjectId)(id)) {
+            throw new ValidationError_1.ValidationError("Invalid quiz ID");
         }
-        await quizService.deleteQuiz(id);
+        await quiz_service_1.default.deleteQuiz(id);
         res.status(200).json({
             success: true,
             message: "Quiz deleted successfully",
@@ -89,3 +99,4 @@ export const deleteQuiz = async (req, res, next) => {
         next(error);
     }
 };
+exports.deleteQuiz = deleteQuiz;

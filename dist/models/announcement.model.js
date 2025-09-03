@@ -1,9 +1,11 @@
-import { Schema, model } from "mongoose";
-const AnnouncementSchema = new Schema({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = require("mongoose");
+const AnnouncementSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     course: { type: String, required: true },
     semester: { type: String, required: true },
-    user: { type: Schema.Types.ObjectId, ref: "Admin", required: true },
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "Admin", required: true },
 }, { timestamps: true });
-export default model("Announcement", AnnouncementSchema);
+exports.default = (0, mongoose_1.model)("Announcement", AnnouncementSchema);

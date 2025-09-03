@@ -1,4 +1,6 @@
-export default class AppError extends Error {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class AppError extends Error {
     constructor(message, statusCode, isOperational = true, success = false, error = "") {
         super(message);
         this.statusCode = statusCode;
@@ -8,3 +10,4 @@ export default class AppError extends Error {
         Error.captureStackTrace(this, this.constructor);
     }
 }
+exports.default = AppError;

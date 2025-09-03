@@ -1,6 +1,12 @@
-import nodemailer from "nodemailer";
-import { SomethingWentWrongError } from "../errors/SomethingWentWrong";
-const transporter = nodemailer.createTransport({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendEmail = void 0;
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const SomethingWentWrong_1 = require("../errors/SomethingWentWrong");
+const transporter = nodemailer_1.default.createTransport({
     service: process.env.NODEMAILER_SERVICE,
     host: process.env.NODEMAILER_HOST,
     port: parseInt(process.env.NODEMAILER_PORT || "465", 10),
@@ -23,7 +29,7 @@ console.log({
     debug: true, // Enable logs
     logger: true, // Log SMTP interactions
 });
-export const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html }) => {
     try {
         const mailOptions = {
             from: `"Invokers Software" <${process.env.NODEMAILER_EMAIL}>`,
@@ -38,6 +44,7 @@ export const sendEmail = async ({ to, subject, html }) => {
     }
     catch (error) {
         console.error("Error sending email:", error);
-        throw new SomethingWentWrongError();
+        throw new SomethingWentWrong_1.SomethingWentWrongError();
     }
 };
+exports.sendEmail = sendEmail;

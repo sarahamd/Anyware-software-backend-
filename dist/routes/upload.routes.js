@@ -1,10 +1,15 @@
-import AWS from "aws-sdk";
-import path from "path";
-import express from "express";
-import sharp from "sharp";
-import multer from "multer";
-import { ValidationError } from "../errors/ValidationError";
-import { requireAdmin } from "../middlewares/requireAdmin.middleware";
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const path_1 = __importDefault(require("path"));
+const express_1 = __importDefault(require("express"));
+const sharp_1 = __importDefault(require("sharp"));
+const multer_1 = __importDefault(require("multer"));
+const ValidationError_1 = require("../errors/ValidationError");
+const requireAdmin_middleware_1 = require("../middlewares/requireAdmin.middleware");
 // FILE FILTER: Only allow JPEG and PNG images.
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === "image/jpeg" ||
@@ -29,52 +34,52 @@ const validateFileSize = (req, file, cb) => {
 };
 // THUMBNAIL CREATOR: Generates a 150x150 webp thumbnail from a buffer.
 const createThumbnail = async (buffer) => {
-    return await sharp(buffer)
+    return await (0, sharp_1.default)(buffer)
         .resize({ width: 150, height: 150, fit: "cover" })
         .webp({ quality: 70 })
         .toBuffer();
 };
 // IMAGE DIMENSION VALIDATION: Ensures dimensions do not exceed 1920x1080.
 const validateImageDimensions = async (buffer) => {
-    const metadata = await sharp(buffer).metadata();
+    const metadata = await (0, sharp_1.default)(buffer).metadata();
     const { width, height } = metadata;
     if (width && height && (width > 1920 || height > 1080)) {
         throw new Error("Image dimensions exceed 1920x1080");
     }
 };
 // MULTER CONFIGURATION: Use memory storage so we can process the file buffer.
-const storage = multer.memoryStorage();
-const upload = multer({
+const storage = multer_1.default.memoryStorage();
+const upload = (0, multer_1.default)({
     storage,
     fileFilter,
 });
 // AWS S3 CONFIGURATION
-const s3 = new AWS.S3({
+const s3 = new aws_sdk_1.default.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Ensure these environment variables are set
     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
 });
 // EXPRESS ROUTER
-const router = express.Router();
+const router = express_1.default.Router();
 // Single file upload endpoint
-router.post("/", requireAdmin, upload.single("image"), async (req, res, next) => {
+router.post("/", requireAdmin_middleware_1.requireAdmin, upload.single("image"), async (req, res, next) => {
     try {
         const file = req.file;
         if (!file) {
-            throw new ValidationError("You must upload an image");
+            throw new ValidationError_1.ValidationError("You must upload an image");
         }
-        const optimizedImage = await sharp(file.buffer)
+        const optimizedImage = await (0, sharp_1.default)(file.buffer)
             .resize({ width: 800, height: 800, fit: "inside" })
             .jpeg({ quality: 80 })
             .toBuffer();
         // Optionally convert the image to webp format
-        const convertedImage = await sharp(file.buffer)
+        const convertedImage = await (0, sharp_1.default)(file.buffer)
             .toFormat("webp")
             .toBuffer();
         // Prepare S3 upload parameters.
         // (Here we're using the original file.buffer, but you might use one of the processed buffers.)
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME, // Ensure this variable is set
-            Key: `images/file-${Date.now()}${path.extname(file.originalname)}`,
+            Key: `images/file-${Date.now()}${path_1.default.extname(file.originalname)}`,
             Body: file.buffer,
             ACL: "public-read-write",
             ContentType: file.mimetype,
@@ -104,7 +109,7 @@ router.post("/multiple", upload.array("images", 10), async (req, res) => {
         const uploadPromises = files.map((file) => {
             const params = {
                 Bucket: process.env.AWS_BUCKET_NAME,
-                Key: `images/file-${Date.now()}${path.extname(file.originalname)}`,
+                Key: `images/file-${Date.now()}${path_1.default.extname(file.originalname)}`,
                 Body: file.buffer,
                 ACL: "public-read-write",
                 ContentType: file.mimetype,
@@ -131,4 +136,4 @@ router.post("/multiple", upload.array("images", 10), async (req, res) => {
         });
     }
 });
-export default router;
+exports.default = router;

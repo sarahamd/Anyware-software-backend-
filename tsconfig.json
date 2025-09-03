@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-        "target": "ES2020",
-        "module": "esnext",
-        "outDir": "dist",
-     "moduleResolution": "Node",
-        "rootDir": "./src",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "types": ["node"],
-        "allowSyntheticDefaultImports": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "target": "ES2020",               // output JS target
+    "module": "commonjs",             // Node.js ESM support
+    "moduleResolution": "node",   // resolves imports like Node
+    "outDir": "dist",                 // compiled JS goes here
+    "rootDir": "src",                 // source TS files
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
