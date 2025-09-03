@@ -35,10 +35,14 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const quizController = __importStar(require("../controllers/quiz.controller"));
+const requireAdmin_middleware_1 = require("../middlewares/requireAdmin.middleware");
 const router = (0, express_1.Router)();
-router.post("/", quizController.createQuiz);
-router.get("/", quizController.getQuizzes);
-router.get("/:id", quizController.getQuizById);
-router.put("/:id", quizController.updateQuiz);
-router.delete("/:id", quizController.deleteQuiz);
+router
+    .route("/")
+    .post(requireAdmin_middleware_1.requireAdmin, quizController.createQuiz)
+    .get(requireAdmin_middleware_1.requireAdmin, quizController.getQuizzes);
+router.route("/:id")
+    .get(requireAdmin_middleware_1.requireAdmin, quizController.getQuizById)
+    .put(requireAdmin_middleware_1.requireAdmin, quizController.updateQuiz)
+    .delete(requireAdmin_middleware_1.requireAdmin, quizController.deleteQuiz);
 exports.default = router;

@@ -8,4 +8,5 @@ const adminAuth_controller_1 = require("../controllers/adminAuth.controller");
 const router = express_1.default.Router();
 router.get("/getCurrentAdmin", adminAuth_controller_1.getCurrentAdmin);
 router.post("/login", adminAuth_controller_1.loginAdmin);
+router.post("/signup", adminAuth_controller_1.registerAdmin);
 exports.default = router;
