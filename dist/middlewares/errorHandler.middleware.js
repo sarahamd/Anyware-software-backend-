@@ -1,0 +1,15 @@
+import AppError from "../errors/BaseError";
+import { InternalServerError } from "../errors/InternalServerError";
+const errorHandler = (err, req, res, next) => {
+    if (err instanceof AppError) {
+        res.status(err.statusCode).json({
+            message: err.message,
+            success: err.success,
+        });
+    }
+    else {
+        console.log("Unexpected error: ", err);
+        return res.status(500).json({ error: new InternalServerError().message });
+    }
+};
+export default errorHandler;
